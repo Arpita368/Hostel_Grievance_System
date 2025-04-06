@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            color: #FFD700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+        }
+        .login-bg {
+            background: url('https://img.freepik.com/free-photo/flat-lay-office-desk-assortment-with-copy-space_23-2148707962.jpg?t=st=1742312601~exp=1742316201~hmac=096b2a6c6b2741af3127742adaa3a9f58ed87be344c34c9ef159dc7dcbd72820&w=1380') no-repeat center center/cover;
+        }
+        .register-bg {
+            background: url('https://img.freepik.com/free-photo/high-angle-plant-notebook-frame_23-2148785012.jpg?t=st=1742313126~exp=1742316726~hmac=7ba0a5844ea2a4650053a1581348618eb744d2d46fa67a7ca020ce1645fd725e&w=1380') no-repeat center center/cover;
+        }
+        .container {
+            max-width: 400px;
+            padding: 20px;
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            text-align: center;
+            background: rgba(34, 34, 34, 0.9);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        .form-control {
+            background: #333;
+            color: #FFD700;
+            border: 1px solid #FFD700;
+        }
+        .form-control::placeholder {
+            color: #AAA;
+        }
+        .btn-custom {
+            background-color: #FFD700;
+            color: #000;
+            border: none;
+        }
+        .btn-custom:hover {
+            background-color: #FFA500;
+        }
+        .toggle {
+            margin-top: 10px;
+            color: #FFD700;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="login-bg" id="page-body">
+    <div class="container" id="login-container">
+        <h2>Login</h2>
+        <form action="/login" method="POST">
+            <select class="form-control mb-2" name="userType">
+                <option value="admin">Login as Admin</option>
+                <option value="student">Login as Student</option>
+            </select>
+            <input type="text" class="form-control mb-2" placeholder="Username" name="username" required>
+            <input type="password" class="form-control mb-2" placeholder="Password" name="password" required>
+            <button type="submit" class="btn btn-custom w-100">Login</button>
+        </form>
+        <p class="toggle" onclick="toggleForm()">Not registered as Student? Sign up</p>
+    </div>
+
+    <div class="container" id="register-container" style="display: none;">
+        <h2>Register</h2>
+        <form action="/register" method="POST">
+            <input type="text" class="form-control mb-2" placeholder="ID" name="id" required>
+            <input type="text" class="form-control mb-2" placeholder="Username" name="username" required>
+            <input type="password" class="form-control mb-2" placeholder="Password" name="password" required>
+            <input type="email" class="form-control mb-2" placeholder="Email" name="email" required>
+            <button type="submit" class="btn btn-custom w-100">Register</button>
+        </form>
+        <p class="toggle" onclick="toggleForm()">Already registered? Login</p>
+    </div>
+
+    <script>
+        function toggleForm() {
+            let body = document.getElementById('page-body');
+            let loginContainer = document.getElementById('login-container');
+            let registerContainer = document.getElementById('register-container');
+
+            if (loginContainer.style.display === 'none') {
+                loginContainer.style.display = 'block';
+                registerContainer.style.display = 'none';
+                body.className = 'login-bg';
+            } else {
+                loginContainer.style.display = 'none';
+                registerContainer.style.display = 'block';
+                body.className = 'register-bg';
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

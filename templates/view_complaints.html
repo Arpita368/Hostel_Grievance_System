@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complaints</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 30px;
+            background: url('https://images.unsplash.com/photo-1629194893765-3a904e9080dd?q=80&w=2038&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;
+            height: 100vh;
+        }
+
+        h2 {
+            text-align: center;
+            color: #6a5acd;
+            margin-top: 40px;
+        }
+
+        .pending-container {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 20px;
+            padding: 20px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .pending-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .resolved-container {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .complaint-card {
+            background: linear-gradient(135deg, #ffffff, #e6e6fa);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            padding: 20px;
+            min-width: 300px;
+            flex: 0 0 30%;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .complaint-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .card-text {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .resolve-btn {
+            background-color: #f4a261;
+            border: none;
+            padding: 6px 12px;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+        }
+
+        /* Popup */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+        }
+
+        .popup-content input[type="submit"] {
+            background: #2a9d8f;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .popup-content textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+        }
+
+        .close-btn {
+            float: right;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .flash-message {
+            text-align: center;
+            color: green;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <script>
+        function openPopup(complaintId, hostellerId, complaintText) {
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('complaint_id').value = complaintId;
+            document.getElementById('hosteller_id').value = hostellerId;
+            document.getElementById('complaint_text').value = complaintText;
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+</head>
+<body>
+
+<h2>Pending Complaints</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-message">
+      {% for category, message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="pending-container">
+    {% for c in complaints %}
+    <div class="complaint-card">
+        <div class="card-title">Complaint {{ loop.index }}</div>
+        <div class="card-text"><strong>Hosteller:</strong> {{ c.username }}</div>
+        <div class="card-text"><strong>Complaint:</strong> {{ c.complaint_text }}</div>
+        <div class="card-text"><strong>Date:</strong> {{ c.complaint_date.strftime('%Y-%m-%d %H:%M') }}</div>
+        <div class="card-text"><strong>Status:</strong> {{ c.status }}</div>
+        <button class="resolve-btn" onclick="openPopup('{{ c.complaint_id }}', '{{ c.hosteller_id }}', `{{ c.complaint_text|e }}`)">Resolve</button>
+    </div>
+    {% endfor %}
+</div>
+
+<h2>Resolved Complaints</h2>
+
+<div class="resolved-container">
+    {% for r in resolved %}
+    <div class="complaint-card">
+        <div class="card-title">Resolved Complaint {{ loop.index }}</div>
+        <div class="card-text"><strong>Hosteller:</strong> {{ r.username }}</div>
+        <div class="card-text"><strong>Complaint:</strong> {{ r.complaint_text }}</div>
+        <div class="card-text"><strong>Resolution:</strong> {{ r.resolution_text }}</div>
+        <div class="card-text"><strong>Resolved On:</strong> {{ r.resolved_date.strftime('%Y-%m-%d %H:%M') }}</div>
+        <div class="card-text"><strong>Status:</strong> {{ r.status }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Popup Form -->
+<div class="popup" id="popup">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup()">×</span>
+        <h3>Enter Resolution</h3>
+        <form action="{{ url_for('resolve_complaint') }}" method="POST">
+            <input type="hidden" id="complaint_id" name="complaint_id">
+            <input type="hidden" id="hosteller_id" name="hosteller_id">
+            <input type="hidden" id="complaint_text" name="complaint_text">
+            <textarea name="resolution_text" required placeholder="Enter resolution text here..."></textarea>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

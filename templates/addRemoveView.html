@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .table-container {
+            background: white;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 25px;
+            background: white;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            color: #34495e;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .table thead {
+            background: #3498db;
+            color: white;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn-primary {
+            background: #2980b9;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #3498db;
+            transform: scale(1.05);
+        }
+
+        .btn-danger:hover {
+            transform: scale(1.05);
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52,152,219,0.3);
+        }
+
+        .status-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center"><i class="fas fa-building me-2"></i> Hostel Management System</h1>
+
+        <div class="form-container card">
+            <h3><i class="fas fa-user-plus me-2"></i> Add New Hosteller</h3>
+            <form id="addForm">
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="name" placeholder="Full Name" required>
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control" id="room_no" placeholder="Room Number" required>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="hostel_name" placeholder="Hostel Name" required>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="contact_no" placeholder="Contact Number (10 digits)" pattern="[0-9]{10}" required>
+                </div>
+                <div class="mb-3">
+                    <input type="email" class="form-control" id="email" placeholder="Email Address" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus me-2"></i> Add Hosteller</button>
+            </form>
+        </div>
+
+        <div class="table-container card">
+            <h3><i class="fas fa-users me-2"></i> Enrolled Hostellers</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Room</th>
+                        <th>Hostel</th>
+                        <th>Contact</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="hostellersTable">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchHostellers() {
+            const response = await fetch('/get_hostellers');
+            const hostellers = await response.json();
+            const tbody = document.getElementById('hostellersTable');
+            tbody.innerHTML = '';
+            hostellers.forEach(h => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${h.hosteller_id}</td>
+                    <td>${h.name}</td>
+                    <td>${h.room_no}</td>
+                    <td>${h.hostel_name}</td>
+                    <td>${h.contact_no}</td>
+                    <td>${h.email}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteHosteller(${h.hosteller_id})">
+                        <i class="fas fa-trash"></i> Delete
+                    </button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('addForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('name').value,
+                room_no: document.getElementById('room_no').value,
+                hostel_name: document.getElementById('hostel_name').value,
+                contact_no: document.getElementById('contact_no').value,
+                email: document.getElementById('email').value
+            };
+            
+            const response = await fetch('/add_hosteller', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                fetchHostellers();
+            }
+        });
+
+        async function deleteHosteller(id) {
+            await fetch(`/delete_hosteller/${id}`, { method: 'DELETE' });
+            fetchHostellers();
+        }
+
+        fetchHostellers();
+    </script>
+</body>
+</html>

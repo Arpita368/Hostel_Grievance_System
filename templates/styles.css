@@ -1,0 +1,205 @@
+/* Resetting some default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+    background-color: #2b2b2b; /* Dark gray */
+    border-right: 5px solid gold; /* Gold border on the right */
+    color: white;
+    height: 100vh; /* Full height */
+    padding: 20px;
+}
+.sidebar .nav-link {
+    color: gold;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.sidebar .nav-link:hover {
+    color: white; /* White hover effect */
+}
+
+
+
+/* Main Content Styles */
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #fff;
+  overflow-y: auto;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+}
+
+.navbar-left input {
+  padding: 5px 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+}
+
+.navbar-right span {
+  margin-right: 15px;
+}
+/* Make the navbar full height */
+.navbar {
+    height: 100vh; /* 100% of the viewport height */
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+}
+
+/* Adjust the navbar links to stretch vertically */
+.nav-item {
+    flex-grow: 1; /* This makes each item take equal space */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the text horizontally and vertically */
+    height: 100%; /* Make each item take up the full height */
+}
+
+/* Optional: Styling for the links */
+.nav-link {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+    display: block;
+}
+
+
+.logout-btn {
+  background-color: #e74c3c;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.nav.flex-column {
+    background: linear-gradient(135deg, #2c3e50, #000000); /* Classy dark gradient */
+    color: white; /* Ensures text is visible */
+    padding: 15px;
+    border-radius: 10px; /* Slightly rounded edges */
+}
+.nav.flex-column .nav-link {
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.nav.flex-column .nav-link:hover {
+    color: #f1c40f; /* Gold hover effect */
+}
+
+
+
+
+.logout-btn:hover {
+  background-color: #c0392b;
+}
+
+h1, h2 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 30px;
+}
+
+.stat-box {
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 200px;
+}
+
+.stat-box h3 {
+  font-size: 20px;
+  color: #3498db;
+}
+
+.stat-box p {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.btn-container {
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #2980b9;
+}
+
+section h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+section {
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  margin-bottom: 20px;
+}
+.card-body img {
+    width: 150px;  /* Change the width to make it bigger */
+    height: auto;  /* Maintain the aspect ratio */
+}
+/* Ensure the cards have the same height */
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  flex-grow: 1; /* This ensures the body takes up all available space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+}
+
+
+  

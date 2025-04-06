@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Charge Fine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            background: linear-gradient(135deg, #fffaf0, #fdf6e3);
+            padding: 30px;
+            border-radius: 12px;
+            width: 400px;
+            margin: 50px auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #ffcc66;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            color: #333;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ffdb85;
+        }
+
+        /* Flash Messages */
+        .flash {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            text-align: center;
+            z-index: 1000;
+            background-color: green;
+            color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .flash.error {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h2>Charge Fine to Student</h2>
+    <div class="container">
+        <form action="/charge_fine" method="post">
+            <div class="input-group">
+                <label for="hostellerId">Select Hosteller</label>
+                <select id="hostellerId" name="hostellerId" required>
+                    <option value="">-- Select Hosteller --</option>
+                    {% for hosteller in hosteller_list %}
+                        <option value="{{ hosteller.reg_id }}">{{ hosteller.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="fineRule">Select Fine Rule</label>
+                <select id="fineRule" name="fineRule" required>
+                    <option value="">-- Select Rule --</option>
+                    {% for rule in fine_rules %}
+                        <option value="{{ rule.rule_id }}">{{ rule.description }} - ₹{{ rule.fine_amount }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit">Charge Fine</button>
+        </form>
+    </div>
+</body>
+</html>

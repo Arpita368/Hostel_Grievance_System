@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fine Rules</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #fffaf0, #fdf6e3);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            margin-bottom: 30px;
+            width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card input, .card button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        table {
+            width: 90%;
+            margin: auto;
+            border-collapse: collapse;
+            background: linear-gradient(135deg, #fffaf0, #fdf6e3);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        th {
+            background-color: #f0e6d6;
+        }
+
+        tr:hover {
+            background-color: #f5ebd9;
+        }
+
+        .btn {
+            background-color: #ffcc66;
+            border: none;
+            padding: 8px 15px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #ffdb85;
+        }
+
+        .pdf-button {
+            display: block;
+            text-align: center;
+            margin: 20px auto;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 99;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #fffaf0, #fdf6e3);
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        .close {
+            float: right;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: red;
+        }
+
+        /* Toast message */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 999;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s;
+        }
+
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fine Rules</h1>
+
+    <div class="card">
+        <form method="POST" action="/add_rule">
+            <label>Description:</label><br>
+            <input type="text" name="description" required><br>
+            <label>Amount:</label><br>
+            <input type="number" name="amount" step="0.01" required><br><br>
+            <button type="submit" class="btn">Add Rule</button>
+        </form>
+    </div>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Amount (₹)</th>
+            <th>Actions</th>
+        </tr>
+        {% for rule in rules %}
+        <tr>
+            <td>{{ rule.rule_id }}</td>
+            <td>{{ rule.rule_description }}</td>
+            <td>{{ rule.fine_amount }}</td>
+            <td>
+                <button class="btn" onclick="openModal('{{ rule.rule_id }}', '{{ rule.rule_description }}', '{{ rule.fine_amount }}')">Edit</button>
+                <a href="/delete_rule/{{ rule.rule_id }}" class="btn">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="pdf-button">
+        <a href="/download_rules_pdf" class="btn">Download PDF</a>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <form method="POST" action="/update_rule">
+                <input type="hidden" name="rule_id" id="edit_rule_id">
+                <label>Description:</label><br>
+                <input type="text" name="description" id="edit_description" required><br>
+                <label>Amount:</label><br>
+                <input type="number" name="amount" step="0.01" id="edit_amount" required><br><br>
+                <button type="submit" class="btn">Update Rule</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Message -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        function openModal(id, description, amount) {
+            document.getElementById('edit_rule_id').value = id;
+            document.getElementById('edit_description').value = description;
+            document.getElementById('edit_amount').value = amount;
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        // Flash messages from Flask
+        const flashMessages = {{ get_flashed_messages() | tojson }};
+        flashMessages.forEach(msg => showToast(msg));
+    </script>
+</body>
+</html>

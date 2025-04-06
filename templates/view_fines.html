@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Fines</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center fixed;
+      background-size: cover;
+      padding: 30px;
+      color: #fff;
+    }
+
+    .header-wrapper {
+      position: relative;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header-wrapper h1 {
+      margin: 0;
+      font-size: 40px;
+      color: #ffffff;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+    }
+
+    .download-button {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+    }
+
+    .download-button a {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: white;
+      padding: 10px 25px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: 1px solid #fff;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+
+    .download-button a:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+      color: #000;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+    }
+
+    .card {
+      width: 300px;
+      padding: 20px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #fff 60%, #fff700 80%, #fff 100%);
+      background-size: 200% 200%;
+      animation: wave 6s ease-in-out infinite alternate;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.2s ease-in-out;
+      color: #333;
+    }
+
+    @keyframes wave {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #222;
+    }
+
+    .card-text {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #444;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .paid {
+      background-color: #27ae60;
+    }
+
+    .not-paid {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-wrapper">
+    <h1>Hostel Fine Records</h1>
+    <div class="download-button">
+      <a href="/download_fine_records_pdf" target="_blank">Download PDF</a>
+    </div>
+  </div>
+
+  <div class="container">
+    {% for fine in fines %}
+      <div class="card">
+        <div class="card-title">Fine Details</div>
+        <div class="card-text"><strong>Reason:</strong> {{ fine.rule_description }}</div>
+        <div class="card-text"><strong>Amount:</strong> ₹{{ '%.2f' | format(fine.amount) }}</div>
+        <div class="card-text"><strong>Date:</strong> {{ fine.fine_date.strftime('%Y-%m-%d %H:%M') }}</div>
+        <div class="card-text">
+          <strong>Status:</strong>
+          <span class="status {{ 'paid' if fine.status == 'paid' else 'not-paid' }}">
+            {{ fine.status.capitalize() }}
+          </span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+</body>
+</html>
